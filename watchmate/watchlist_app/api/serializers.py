@@ -1,4 +1,5 @@
 from rest_framework import serializers
+# from rest_framework.validators import ValidationError
 from watchlist_app.models import WatchList
 
 class WatchListSerializer(serializers.Serializer):
@@ -20,3 +21,16 @@ class WatchListSerializer(serializers.Serializer):
         instance.created_date = validate_data.get('created_date', instance.created_date)
         instance.save()
         return instance
+    
+    # Field level Validation
+    def validate_title(self, value):
+        if len(value) < 3:
+            raise serializers.ValidationError("Title length is too short.")
+        return value
+    
+    
+    # Validation on multiple fields
+    def validate(self, data):
+        if data['title'].lower() == data['storyline'].lower():
+            raise serializers.ValidationError("Title and its Description should be Different.")
+        return data

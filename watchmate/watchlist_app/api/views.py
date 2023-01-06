@@ -2,6 +2,7 @@ from watchlist_app.models import WatchList
 from watchlist_app.api.serializers import WatchListSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
 
 
 @api_view(['GET','post'])
@@ -25,7 +26,10 @@ def WatchListView(request):
 def WatchListDetail(request, pk):
     
     if request.method == 'GET': 
-        watchlist = WatchList.objects.get(pk=pk)
+        try:
+            watchlist = WatchList.objects.get(pk=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = WatchListSerializer(watchlist)
         return Response(serializer.data)
 
@@ -44,4 +48,4 @@ def WatchListDetail(request, pk):
         data = {
             'detail':"Deleted successfully",
         }
-        return Response(data)
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
