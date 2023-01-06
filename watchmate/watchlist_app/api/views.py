@@ -21,8 +21,27 @@ def WatchListView(request):
             return Response(serializer.errors)
     
     
-@api_view()
+@api_view(['GET','PUT','DELETE'])
 def WatchListDetail(request, pk):
-    watchlist = WatchList.objects.get(pk=pk)
-    serializer = WatchListSerializer(watchlist)
-    return Response(serializer.data)
+    
+    if request.method == 'GET': 
+        watchlist = WatchList.objects.get(pk=pk)
+        serializer = WatchListSerializer(watchlist)
+        return Response(serializer.data)
+
+    if request.method == 'PUT':
+        movie = WatchList.objects.get(pk=pk)
+        serializer = WatchListSerializer(movie, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+    
+    if request.method == 'DELETE':
+        movie = WatchList.objects.get(pk=pk)
+        movie.delete()
+        data = {
+            'detail':"Deleted successfully",
+        }
+        return Response(data)
