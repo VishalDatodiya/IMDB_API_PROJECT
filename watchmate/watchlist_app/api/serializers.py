@@ -1,20 +1,33 @@
 from rest_framework import serializers
-from watchlist_app.models import WatchList
+from watchlist_app.models import WatchList, StreamPlatform
+
+
+
+
+
 
 
 class WatchListSerializer(serializers.ModelSerializer):
     class Meta:
         model = WatchList
-        # fields = "__all__"
+        fields = "__all__"
+        
         # or
         # fields = ['title','storyline','active','created_date']
         
         # or if I want to exclude some fields then
-        exclude = ('created_date',)
+        # exclude = ('created_date',)
 
     # We can use validators here
     
-    
+
+class StreamPlatformSerializer(serializers.ModelSerializer):
+
+    watchlist = WatchListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = StreamPlatform
+        fields = "__all__" 
     
 
 # If we are using ModelSerializer Then we Don't need of any create update or manually defined the fields name

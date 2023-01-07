@@ -1,9 +1,57 @@
-from watchlist_app.models import WatchList
-from watchlist_app.api.serializers import WatchListSerializer
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
+
+from watchlist_app.models import WatchList, StreamPlatform
+from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSerializer
+
+
+class StreamPlatformList(APIView):
+    
+    def get(self, request):
+        platforms = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(platforms, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = StreamPlatformSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+
+class StreamPlatformDetail(APIView):
+    
+    def get(self, request, pk):
+        try:
+            plateform = StreamPlatform.objects.get(pk=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = StreamPlatformSerializer(plateform)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        plateform = StreamPlatform.objects.get(pk=pk)
+        serializer = StreamPlatformSerializer(plateform, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+        
+    def delete(self, request, pk):
+        try:
+            plateform = StreamPlatform.objects.get(pk=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        plateform.delete()
+        data = {
+            'detail':"Deleted successfully",
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
 
 
 class WatchListView(APIView):
