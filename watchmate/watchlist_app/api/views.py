@@ -5,7 +5,9 @@ from rest_framework import status
 from rest_framework import generics
 # from rest_framework import mixins
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
+from watchlist_app.api.permissions import AdminOrReadOnly, UserReviewOrReadOnly
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 
@@ -19,6 +21,8 @@ from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSer
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
+    
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return Review.objects.all()
@@ -34,6 +38,17 @@ class ReviewCreate(generics.CreateAPIView):
         
         if review_queryset.exists():
             raise ValidationError("You already gave the Review!")
+        
+        
+        # Reting calculation after the isExist condition bcz we want to first check that is they Gave review or not otherwise it affect our calculations
+        
+        if watchlist.number_rating == 0:
+            watchlist.average_rating = serializer.validated_data['rating']
+        else:
+            watchlist.average_rating = (watchlist.average_rating + serializer.validated_data['rating']) / 2
+        
+        watchlist.number_rating += 1
+        watchlist.save()
         
         serializer.save(watchlist=watchlist, review_user=review_user)
 
@@ -51,6 +66,9 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    
+    # permission_classes = [AdminOrReadOnly]
+    permission_classes = [UserReviewOrReadOnly]
 
 
 
@@ -128,6 +146,8 @@ class StreamPlatformDetail(APIView):
 
 
 class WatchListView(APIView):
+    
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get(self, request):
         wathlist = WatchList.objects.all()
