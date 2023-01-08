@@ -1,7 +1,13 @@
 from django.urls import path
-from watchlist_app.api.views import WatchListView, WatchListDetail, StreamPlatformList, StreamPlatformDetail, ReviewList, ReviewDetail
+from watchlist_app.api.views import WatchListView, WatchListDetail, StreamPlatformList, StreamPlatformDetail, ReviewList, ReviewDetail,ReviewCreate
 
 urlpatterns = [
+    
+    # Function Based View Urls
+    
+#     path('', WatchListView, name='watchlist'),
+#     path('<int:pk>/', WatchListDetail, name='watchlistDetail'),
+    
     
     # Class based View Urls
     path('', WatchListView.as_view(), name="watchlist"),
@@ -13,10 +19,12 @@ urlpatterns = [
     
     
     # Reviews URLs
-    path('reviews/',ReviewList.as_view(), name="reviews"),
+    # I want all the reviews of a purticular movie only
+    path('<int:pk>/review-create', ReviewCreate.as_view(), name="reviewCreate"),
+    path('<int:pk>/reviews/',ReviewList.as_view(), name="reviews"),
     path('reviews/<int:pk>/', ReviewDetail.as_view(), name="reviewDetail"),    
-    # Function Based View Urls
     
-#     path('', WatchListView, name='watchlist'),
-#     path('<int:pk>/', WatchListDetail, name='watchlistDetail'),
+    
+    
+    
 ]
