@@ -145,5 +145,21 @@ REST_FRAMEWORK = {
     # Token Authentication
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    
+    
+    # Throttling  -> Here it will restrict to send only limited request for our website
+    
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.AnonRateThrottle',
+    #     'rest_framework.throttling.UserRateThrottle'
+    # ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '2/day',
+        # 'user': '15/day',
+        # Scope rate throttling
+        'review-create': '2/day',
+        'review-list': '10/day',
+        "review-detail": '5/day'
+    }
 }

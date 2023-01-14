@@ -20,7 +20,7 @@ urlpatterns = [
     
     # Reviews URLs
     # I want all the reviews of a purticular movie only
-    path('<int:pk>/review-create', ReviewCreate.as_view(), name="reviewCreate"),
+    path('<int:pk>/review-create/', ReviewCreate.as_view(), name="reviewCreate"),
     path('<int:pk>/reviews/',ReviewList.as_view(), name="reviews"),
     path('reviews/<int:pk>/', ReviewDetail.as_view(), name="reviewDetail"),    
     
