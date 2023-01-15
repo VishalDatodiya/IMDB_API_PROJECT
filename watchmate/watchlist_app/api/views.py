@@ -7,6 +7,8 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle, ScopedRateThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 from watchlist_app.api.permissions import IsAdminOrReadOnly, IsUserReviewOrReadOnly
 from watchlist_app.models import WatchList, StreamPlatform, Review
@@ -25,6 +27,21 @@ from watchlist_app.api.trottling import ReviewCreateThrottle, ReviewListThrottle
 # Using generic (concrete class based view)
 
 # =============================================================================================================
+
+
+class UserReview(generics.ListAPIView):
+    
+    serializer_class = ReviewSerializer
+    
+    # Filtering against query URLs
+    # def get_queryset(self):
+    #     username = self.kwargs['username']
+    #     return Review.objects.filter(review_user__username = username)
+
+    # Filtering against query parameters
+    def get_queryset(self):
+        username = self.request.query_params.get('username')
+        return Review.objects.filter(review_user__username = username)
 
 
 class ReviewCreate(generics.CreateAPIView):
@@ -172,6 +189,24 @@ class StreamPlatformDetail(APIView):
             'detail':"Deleted successfully",
         }
         return Response(data, status=status.HTTP_204_NO_CONTENT)
+
+
+
+class WatchListTesting(generics.ListCreateAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    
+    # filtering
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['title', 'platform__name']
+
+    # seraching
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'platform__name']
+
+    # filter_backends = [filters.OrderingFilter]
+    # ordering_fields = ['average_rating']
+    
 
 
 class WatchListView(APIView):

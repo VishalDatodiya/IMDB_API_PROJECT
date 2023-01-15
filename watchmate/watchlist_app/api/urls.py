@@ -1,5 +1,5 @@
 from django.urls import path
-from watchlist_app.api.views import WatchListView, WatchListDetail, StreamPlatformList, StreamPlatformDetail, ReviewList, ReviewDetail,ReviewCreate
+from watchlist_app.api.views import WatchListView, WatchListDetail, StreamPlatformList, StreamPlatformDetail, ReviewList, ReviewDetail,ReviewCreate, UserReview, WatchListTesting
 
 urlpatterns = [
     
@@ -12,6 +12,8 @@ urlpatterns = [
     # Class based View Urls
     path('', WatchListView.as_view(), name="watchlist"),
     path('<int:pk>/', WatchListDetail.as_view(), name="watchListDetail"),
+    path('watchlist-testing/', WatchListTesting.as_view(), name='testing'),
+    
     
     # Stream Plateform Urls
     path('stream/', StreamPlatformList.as_view(), name='streamPlateformList'),
@@ -24,7 +26,9 @@ urlpatterns = [
     path('<int:pk>/reviews/',ReviewList.as_view(), name="reviews"),
     path('reviews/<int:pk>/', ReviewDetail.as_view(), name="reviewDetail"),    
     
-    
+    # Filtering thru urls.
+    # path('reviews/<str:username>/', UserReview.as_view(), name='user-review-detail'),
+    path('review/', UserReview.as_view(), name='user-review-detail'),
     
     
 ]

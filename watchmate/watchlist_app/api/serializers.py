@@ -13,7 +13,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class WatchListSerializer(serializers.ModelSerializer):
-    reviews = ReviewSerializer(many=True, read_only=True)
+    # reviews = ReviewSerializer(many=True, read_only=True)
+    
+    # overiding the plateform name instead of id
+    platform = serializers.CharField(source="platform.name")
+    
     class Meta:
         model = WatchList
         fields = "__all__"
